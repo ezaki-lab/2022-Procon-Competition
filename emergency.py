@@ -11,14 +11,14 @@ import time
 
 url = "https://procon33-practice.kosen.work"
 filepath = "C:/Users/shojushota/Documents/procon33"  
-token = "4e459f78c6dc79110225a7521598fb072aa97c00e83ea7abd6226092d427dfba"
+token = open("token.txt").read()
     
 def match() -> None:
     endpoint = urllib.parse.urljoin(url,"match")
     res = requests.get(endpoint,  headers={"procon-token": token})
     
     if res.status_code!=200:
-        print1(res.text)
+        print(res.text)
         
     else:
         print(res.text)
@@ -80,17 +80,21 @@ if __name__ == "__main__":
         
         if mode == 1:
             match()
+            
         elif mode == 2:
             filename = problem()
+            
         elif mode ==3:
             chunk = input("分割数:")
             wavfile = chunks(chunk)
             wav_coupling.WavSort(wavfile,filename)
             result = kinzi.kinzi(filename + ".wav")
             answer(result)
+            
         elif mode == 4:
             result = input("answer:")
             answer(result)
+            
         elif mode == 5:
             break
     

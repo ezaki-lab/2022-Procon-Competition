@@ -11,7 +11,7 @@ import time
 
 url = "https://procon33-practice.kosen.work"
 filepath = "C:/Users/shojushota/Documents/procon33"  
-token = "4e459f78c6dc79110225a7521598fb072aa97c00e83ea7abd6226092d427dfba"
+token = open("token.txt").read()
 # 処理時間計測開始
 start = time.time()
 
