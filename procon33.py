@@ -7,14 +7,10 @@ import re
 import wav_coupling
 import datetime
 import kinzi
-import time
 
 url = "https://procon33-practice.kosen.work"
-filepath = "C:/Users/shojushota/Documents/procon33"  
+filepath = "./problem"  
 token = open("token.txt").read()
-# 処理時間計測開始
-start = time.time()
-
     
 def match() -> None:
     endpoint = urllib.parse.urljoin(url,"match")
@@ -38,10 +34,10 @@ def problem() -> None:
 
         start = datetime.datetime.fromtimestamp(res["starts_at"])
         print("id:{}\n 分割数:{}\n 開始時間:{}:{}:{}\n 制限時間:{}\n データ数:{}".format(res["id"], res["chunks"], start.hour,start.minute,start.second, res["time_limit"], res["data"]))
-        return True, res["id"]
+        return res["id"]
 
 def chunks(chunks) -> None:
-    endpoint = urllib.parse.urljoin(url,"problem/chunks?n="+chunks)
+    endpoint = urllib.parse.urljoin(url,"problem/chunks?n=" + chunks)
     res = requests.post(endpoint, headers={"procon-token": token})
     if res.status_code==200:
         loads = json.loads(res.text)  
@@ -49,7 +45,7 @@ def chunks(chunks) -> None:
         wavfile = []
     
         for count in range(len(filename)):
-            endpoint =urllib.parse.urljoin(url, "problem/chunks/"+filename[count])
+            endpoint =urllib.parse.urljoin(url, "problem/chunks/" + filename[count])
             res = requests.get(endpoint,  headers={"procon-token": token})
             file = open(os.path.join(filepath,os.path.basename(endpoint)),"wb")
             for chunks in res.iter_content(100000):
@@ -78,15 +74,11 @@ def answer(answers:str) -> None:
     
 if __name__ == "__main__":
     match()    
-    judge,filename = problem()
+    filename = problem()
     chunk = input("分割数:")
     wavfile = chunks(chunk)
-    wav_coupling.WavSort(wavfile,filename)
-    result = kinzi.kinzi(filename + ".wav")
-    answer(result)
-    
-    end = time.time()
-    # 処理時間表示
-    print("Total elapsed time : {}[sec]".format(round(end - start, 4)))
+    wavpath = wav_coupling.WavSort(wavfile,filename)
+    #result = kinzi.kinzi(filename + ".wav")
+    #answer(result)
     
     

@@ -13,5 +13,7 @@ def WavSort(wavlist,name):
         wavdata.extend(data)
         
     wavdata = np.array(wavdata,dtype = "int16")
+    name = "./problem" + name +".wav"
+    write(name, rate=fs, data = wavdata)
     
-    write(name + ".wav", rate=fs, data=wavdata)
+    return name

@@ -2,6 +2,7 @@ import numpy as np
 from scipy.io.wavfile import read
 from scipy import signal
 import time
+import fftonly 
 
 
 
@@ -19,10 +20,6 @@ def partial_dtw(x, y):
     B = np.zeros((Tx, Ty, 2), int)
 
     C[0, 0] = dist(x[0], y[0])
-    
-    #for i in range(Tx):
-    #   C[i, 0] = dist(x[i], y[0])
-    #   B[i, 0] = [0, 0]
 
     for j in range(1, Ty):
         C[0, j] = C[0, j - 1] + dist(x[0], y[j])
@@ -67,7 +64,7 @@ def get_min(m0, m1, m2, i, j):
  
 
 def kinzi(input_name):
-
+    
     with open(PATH_LIST) as f:
         name = [line.strip() for line in f.readlines()] # 改行削除
     
@@ -79,23 +76,19 @@ def kinzi(input_name):
     
     #入力データの読み込み
     #fs6,datadd= read("/content/drive/MyDrive/sample_answer/sample_answer_Q_E04/A01-1.wav")
-    fs6,datadd= read(input_name)
-    
-    #音声データの圧縮
-    d = datadd
-    
+    fs,data= read(input_name)
+ 
     #magnification = 70*(len(d)/48000) / len(d)
-    magnification =  50 *(len(d)/48000) / len(d)
+    magnification =  50 * (len(data)/48000) / len(data)
     
     for i in ans:
         ans_down.append(signal.resample(i,int(len(i)*magnification)))
     
-    input_data = signal.resample(d,int(len(d)*magnification))
+    input_data = signal.resample(data,int(len(data)*magnification))
      
     for j in ans_down:
         path, cost = partial_dtw(j, input_data)
     
     sort = sorted(costAll)
-    
     
     return name[costAll.index(sort[0])][1:3]
