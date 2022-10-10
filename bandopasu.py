@@ -4,7 +4,6 @@ from scipy import fftpack
 from scipy.fftpack import fft
 import librosa
 from scipy.io.wavfile import write
-from pydub import AudioSegment
 
 
 def wav_read(path): # 音声ファイルを読み込む
@@ -67,50 +66,45 @@ def fft_ave(data_array, samplerate, Fs, N_ave, acf):
 #リニア値からdBへ変換
 def db(x, dBref):
     y = 20 * np.log10(x / dBref)     #変換式
-    return y                         #dB値を返す
+    return y      
+                   #dB値を返す
+def band(wavpath):
+    # ここからサンプル波形生成とフィルタ処理をする-------------------------------------------
+    samplerate = 48000
+    q = 48000/22050
+        
+    problem = wavpath.replace('./problem/', '')
+    data,f= wav_read(wavpath + ".wav")
+    yf, frq = calc_fft(data, f)
 
-# ここからサンプル波形生成とフィルタ処理をする-------------------------------------------
-samplerate = 48000
-q = 48000/22050
-wavpath = "./problem/Eaaa"
+    # 波形生成のための時間軸の作成
     
-n_fft=2048  # STFTカラム間の音声フレーム数
-hop_length=512  # STFTカラム間の音声フレーム数
-win_length=2048  # ウィンドウサイズ
-n_std_thresh=1.5  # 信号とみなされるために、ノイズの平均値よりも大きい標準偏差（各周波数レベルでの平均値のdB）が何個あるかのしきい値
-
-problem = wavpath.replace('./problem/', '')
-data,f= wav_read(wavpath + ".wav")
-yf, frq = calc_fft(data, f)
-x = frq/samplerate *72000
-# 波形生成のための時間軸の作成
-
-start = [216.56531832921507, 424.55236449742387, 635.4581388555695, 812.3438492483591, 1054.1261835509624,1250]
-end = [233.93855216038023, 468.55836523848967, 702.4031281115167, 936.049399243616, 1176.3345493490413,1350]
-# start = [216.56531832921507, 424.55236449742387, 635.4581388555695, 812.3438492483591, 1054.1261835509624,1250,1450,1650,2750]
-# end = [233.93855216038023, 468.55836523848967, 702.4031281115167, 936.049399243616, 1176.3345493490413,1350,1550,1750,2850]
-
-# start = [216.56531832921507, 424.55236449742387, 635.4581388555695, 812.3438492483591,1000]
-# end = [233.93855216038023, 468.55836523848967, 702.4031281115167, 936.049399243616,1100]
-
-dif = 50
-plusband = 0
-# バンドパスをする関数を実行
-data_filt = [0] * len(end)
-fp = np.array([(plusband + start[0])*q ,q*(plusband + end[0])])                             # 通過域端周波数[Hz]※ベクトル
-fs = np.array([(start[0]-dif+plusband)*q,(end[0]+dif+plusband)*q])                              # 阻止域端周波数[Hz]※ベクトル
-gpass = 5
-gstop = 6
-data_filt[0] = bandpass(data, samplerate, fp, fs, gpass, gstop)
-data_filt[0] = data_filt[0].astype(np.float32)
-
-for j in range(1,len(end)):
-    fp = np.array([(plusband + start[j])*q ,q*(plusband + end[j])])                             # 通過域端周波数[Hz]※ベクトル
-    fs = np.array([(start[j]-dif+plusband)*q,(end[j]+dif+plusband)*q])                              # 阻止域端周波数[Hz]※ベクトル
+    start = [216.56531832921507, 424.55236449742387, 635.4581388555695, 812.3438492483591, 1054.1261835509624,1250]
+    end = [233.93855216038023, 468.55836523848967, 702.4031281115167, 936.049399243616, 1176.3345493490413,1350]
+    # start = [216.56531832921507, 424.55236449742387, 635.4581388555695, 812.3438492483591, 1054.1261835509624,1250,1450,1650,2750]
+    # end = [233.93855216038023, 468.55836523848967, 702.4031281115167, 936.049399243616, 1176.3345493490413,1350,1550,1750,2850]
+    
+    # start = [216.56531832921507, 424.55236449742387, 635.4581388555695, 812.3438492483591,1000]
+    # end = [233.93855216038023, 468.55836523848967, 702.4031281115167, 936.049399243616,1100]
+    
+    dif = 50
+    plusband = 0
+    # バンドパスをする関数を実行
+    data_filt = [0] * len(end)
+    fp = np.array([(plusband + start[0])*q ,q*(plusband + end[0])])                             # 通過域端周波数[Hz]※ベクトル
+    fs = np.array([(start[0]-dif+plusband)*q,(end[0]+dif+plusband)*q])                              # 阻止域端周波数[Hz]※ベクトル
     gpass = 5
     gstop = 6
-    data_filt[j] = bandpass(data, samplerate, fp, fs, gpass, gstop)
-    data_filt[j] = data_filt[j].astype(np.float32)
-    data_filt[j] += data_filt[j-1]
-
-write("processing/{}band.wav".format(problem), rate=f, data=data_filt[len(end)-1])
+    data_filt[0] = bandpass(data, samplerate, fp, fs, gpass, gstop)
+    data_filt[0] = data_filt[0].astype(np.float32)
+    
+    for j in range(1,len(end)):
+        fp = np.array([(plusband + start[j])*q ,q*(plusband + end[j])])                             # 通過域端周波数[Hz]※ベクトル
+        fs = np.array([(start[j]-dif+plusband)*q,(end[j]+dif+plusband)*q])                              # 阻止域端周波数[Hz]※ベクトル
+        gpass = 5
+        gstop = 6
+        data_filt[j] = bandpass(data, samplerate, fp, fs, gpass, gstop)
+        data_filt[j] = data_filt[j].astype(np.float32)
+        data_filt[j] += data_filt[j-1]
+    
+    write("processing/{}band.wav".format(problem), rate=f, data=data_filt[len(end)-1])

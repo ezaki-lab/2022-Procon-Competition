@@ -74,31 +74,24 @@ def fft_ave(data_array, samplerate, Fs, N_ave, acf):
     return fft_array, fft_mean, fft_axis
 
 
-
-# ここからサンプル波形生成とフィルタ処理をする-------------------------------------------
-
-samplerate = 22050
-problem = "zproblemM10zz"
-source = "C:/Users/hasuk/Desktop/sound/{}.wav".format(problem)
-#source = "C:/Users/hasuk/Downloads/Conv-TasNet-master/Conv-TasNet-master/Conv_TasNet_Pytorch/Eonly.wav"
-#source = "C:/Users/hasuk/Documents/a1116.wav"
-
-data,f= wav_read(source)
-yf, frq = calc_fft(data, f)
-x = frq/samplerate *72000            # 波形生成のための時間軸の作成
-
-
-
-fp = 1500                                               # 通過域端周波数[Hz]
-fs = 6000                                               # 阻止域端周波数[Hz]
-gpass = 3                                               # 通過域端最大損失[dB]
-gstop = 40                                              # 阻止域端最小損失[dB]
-num=4
-
-# ローパスをする関数を実行
-data_filt = lowpass(data, samplerate, fp, fs, gpass, gstop)
-data_filt = data_filt.astype(np.float32)
-write("{problem}{num}low.wav".format(problem=problem,num=num), rate = f,data = data_filt)
-data_high = highpass(data,samplerate,fp,fs,gpass,gstop)
-data_high = data_high.astype(np.float32)
-write("{problem}{num}high.wav".format(problem=problem,num=num),rate= f ,data = data_high)
+def highlow(wavpath):
+    # ここからサンプル波形生成とフィルタ処理をする-------------------------------------------
+    
+    samplerate = 22050
+    problem = wavpath.replace('./problem/', '')    
+    data,f= wav_read(wavpath + ".wav")
+    yf, frq = calc_fft(data, f)
+    
+    fp = 1500                                               # 通過域端周波数[Hz]
+    fs = 6000                                               # 阻止域端周波数[Hz]
+    gpass = 3                                               # 通過域端最大損失[dB]
+    gstop = 40                                              # 阻止域端最小損失[dB]
+    
+    # ローパスをする関数を実行
+    data_filt = lowpass(data, samplerate, fp, fs, gpass, gstop)
+    data_filt = data_filt.astype(np.float32)
+    path = "./processing/" + problem
+    write("{}low.wav".format(path), rate = f,data = data_filt)
+    data_high = highpass(data,samplerate,fp,fs,gpass,gstop)
+    data_high = data_high.astype(np.float32)
+    write("{}high.wav".format(path),rate= f ,data = data_high)
