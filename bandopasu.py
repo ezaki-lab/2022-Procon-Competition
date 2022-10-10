@@ -68,7 +68,7 @@ def db(x, dBref):
     y = 20 * np.log10(x / dBref)     #変換式
     return y      
                    #dB値を返す
-def band(wavpath):
+def band(wavpath,filename):
     # ここからサンプル波形生成とフィルタ処理をする-------------------------------------------
     samplerate = 48000
     q = 48000/22050
@@ -107,4 +107,4 @@ def band(wavpath):
         data_filt[j] = data_filt[j].astype(np.float32)
         data_filt[j] += data_filt[j-1]
     
-    write("processing/{}band.wav".format(problem), rate=f, data=data_filt[len(end)-1])
+    write("processing/{}/{}band.wav".format(filename,problem), rate=f, data=data_filt[len(end)-1])

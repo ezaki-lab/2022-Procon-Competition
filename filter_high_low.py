@@ -73,7 +73,7 @@ def fft_ave(data_array, samplerate, Fs, N_ave, acf):
     return fft_array, fft_mean, fft_axis
 
 
-def highlow(wavpath):
+def highlow(wavpath,filename):
     # ここからサンプル波形生成とフィルタ処理をする-------------------------------------------
     
     samplerate = 22050
@@ -89,7 +89,7 @@ def highlow(wavpath):
     # ローパスをする関数を実行
     data_filt = lowpass(data, samplerate, fp, fs, gpass, gstop)
     data_filt = data_filt.astype(np.float32)
-    path = "./processing/" + problem
+    path = "./processing/" + filename + "/" + problem
     write("{}low.wav".format(path), rate = f,data = data_filt)
     data_high = highpass(data,samplerate,fp,fs,gpass,gstop)
     data_high = data_high.astype(np.float32)

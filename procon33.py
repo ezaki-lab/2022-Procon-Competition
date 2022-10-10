@@ -9,6 +9,7 @@ import datetime
 import kinzi
 import bandopasu
 import filter_high_low
+import os
 
 url = "https://procon33-practice.kosen.work"
 filepath = "./problem"  
@@ -88,9 +89,10 @@ if __name__ == "__main__":
     filename = problem()
     chunk = input("分割数:")
     wavfile = chunks(chunk)
+    os.mkdir("./processing/"+ filename)
     wavpath = wav_coupling.WavSort(wavfile,filename)
-    bandopasu.band(wavpath)
-    filter_high_low.highlow(wavpath)
+    bandopasu.band(wavpath,filename)
+    filter_high_low.highlow(wavpath,filename)
     #result = kinzi.kinzi(filename + ".wav")
     answer()
     

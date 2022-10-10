@@ -7,6 +7,8 @@ import wav_coupling
 import datetime
 import time
 import sys
+import filter_high_low
+import bandopasu
 
 url = "https://procon33-practice.kosen.work"
 filepath = "./problem"  
@@ -93,7 +95,9 @@ if __name__ == "__main__":
             time.sleep(0.2)
             chunk = input("分割数:")
             wavfile = chunks(chunk)
-            wav_coupling.WavSort(wavfile,filename)
+            wavpath = wav_coupling.WavSort(wavfile,filename)
+            bandopasu.band(wavpath,filename)
+            filter_high_low.highlow(wavpath,filename)
             
         elif mode == "3":
             result = input("answer:")
