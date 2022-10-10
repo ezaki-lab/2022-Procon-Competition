@@ -58,8 +58,17 @@ def chunks(chunks) -> None:
     else:
         sys.exit(res.content) 
     
-def answer(answers:str) -> None:
+def answer() -> None:
+    ansin = input("answer:")
+    answers = ""
+    ans = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわ"
     endpoint = urllib.parse.urljoin(url,"problem")
+    
+    for i in range(43):
+        for j in ansin:
+            if j == ans[i]: 
+                answers += str(i+1).zfill(2)
+                
     answers = re.split('(..)',answers)[1::2]
     
     res = requests.get(endpoint, headers = {"procon-token": token})
@@ -73,7 +82,7 @@ def answer(answers:str) -> None:
     res = requests.post(endpoint, headers={"procon-token": token,
                                            "Content-Type": "application/json"}, data = j)
     print(res.text)
-    
+
 if __name__ == "__main__":
     match()    
     filename = problem()
@@ -83,6 +92,6 @@ if __name__ == "__main__":
     bandopasu.band(wavpath)
     filter_high_low.highlow(wavpath)
     #result = kinzi.kinzi(filename + ".wav")
-    #answer(result)
+    answer()
     
     

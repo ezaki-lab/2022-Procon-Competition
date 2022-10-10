@@ -1,7 +1,6 @@
 import numpy as np
 from scipy import signal
 from scipy import fftpack
-from matplotlib import pyplot as plt
 from scipy.fftpack import fft
 import librosa
 from scipy.io.wavfile import read,write
