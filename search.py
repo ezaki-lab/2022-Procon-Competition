@@ -1,5 +1,5 @@
 import openpyxl as excel
-df = excel.load_workbook("C:/Users/shojushota/Downloads/mozi.xlsx")
+df = excel.load_workbook("./mozi.xlsx")
 sheet = df.active
 excel_dataE = []
 excel_dataJ = []
