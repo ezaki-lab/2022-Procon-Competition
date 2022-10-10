@@ -5,6 +5,15 @@ from scipy.fftpack import fft
 import librosa
 from scipy.io.wavfile import write
 
+#バターワースフィルタ（バンドストップ）
+def bandstop(x, samplerate, fp, fs, gpass, gstop):
+    fn = samplerate / 2                           #ナイキスト周波数
+    wp = fp / fn                                  #ナイキスト周波数で通過域端周波数を正規化
+    ws = fs / fn                                  #ナイキスト周波数で阻止域端周波数を正規化
+    N, Wn = signal.buttord(wp, ws, gpass, gstop)  #オーダーとバターワースの正規化周波数を計算
+    b, a = signal.butter(N, Wn, "bandstop")       #フィルタ伝達関数の分子と分母を計算
+    y = signal.filtfilt(b, a, x)                  #信号に対してフィルタをかける
+    return y                                      #フィルタ後の信号を返す
 
 def wav_read(path): # 音声ファイルを読み込む
     wave, fs = librosa.core.load(path, mono=True)
@@ -39,7 +48,6 @@ def nband(wavpath):
         
     problem = wavpath.replace('./problem/', '')
     data,f= wav_read(wavpath + ".wav")
-
     # 波形生成のための時間軸の作成
     
     start = [424.55236449742387, 500]
@@ -63,7 +71,7 @@ def nband(wavpath):
         data_filt[j] = bandpass(data, samplerate, fp, fs, gpass, gstop)
         data_filt[j] = data_filt[j].astype(np.float32)
         data_filt[j] += data_filt[j-1]
-    
+
     write("processing/n{}band.wav".format(problem), rate=f, data=data_filt[len(end)-1])
     
 def iband(wavpath):
@@ -72,7 +80,6 @@ def iband(wavpath):
     q = 48000/22050
     problem = wavpath.replace('./problem/', '')
     data,f= wav_read(wavpath + ".wav")
-    
     start = [300]
     end = [1700]
 
@@ -86,4 +93,27 @@ def iband(wavpath):
     gstop = 6                                             # 阻止域端最小損失[dB]
     data_filt = bandpass(data, samplerate, fp, fs, gpass, gstop)
     data_filt = data_filt.astype(np.float32)
+    data_filt *=5
     write(f"processing/i{problem}.wav", rate=f, data=data_filt)
+    
+def eband(wavpath):
+    
+    samplerate = 48000
+    q=48000/22050
+    problem = wavpath.replace('./problem/', '')
+    data ,f = wav_read(wavpath + ".wav")
+    fp = np.array([500, 1500])      #通過域端周波数[Hz]※ベクトル
+    fs = np.array([250, 6000])      #阻止域端周波数[Hz]※ベクトル    gpass = 3                                               # 通過域端最大損失[dB]
+    gstop = 40                                              # 阻止域端最小損失[dB]
+     
+    data_filt = bandstop(data, samplerate, fp, fs, gpass, gstop)
+    
+    data_filt = data_filt.astype(np.float32)
+    write(f"processing/e{problem}.wav",rate = f, data=data_filt)
+
+# def uband(wavpath):
+        
+#     samplerate = 48000
+#     q=48000/22050
+#     problem = wavpath.replace('./problem/', '')
+#     data ,f = wav_read(wavpath + ".wav")
