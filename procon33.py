@@ -10,6 +10,7 @@ import kinzi
 import bandopasu
 import filter_high_low
 import os
+import noisecancel
 
 url = "https://procon33-practice.kosen.work"
 filepath = "./problem"  
@@ -89,10 +90,12 @@ if __name__ == "__main__":
     filename = problem()
     chunk = input("分割数:")
     wavfile = chunks(chunk)
-    os.mkdir("./processing/"+ filename)
+    if not os.path.exists("./processing/" + filename):
+        os.mkdir("./processing/" + filename)
     wavpath = wav_coupling.WavSort(wavfile,filename)
-    bandopasu.band(wavpath,filename)
+    writename = bandopasu.band(wavpath,filename)
     filter_high_low.highlow(wavpath,filename)
+    noisecancel.noise_cancel(wavpath,writename)
     #result = kinzi.kinzi(filename + ".wav")
     answer()
     

@@ -77,7 +77,7 @@ def highlow(wavpath,filename):
     # ここからサンプル波形生成とフィルタ処理をする-------------------------------------------
     
     samplerate = 22050
-    problem = wavpath.replace('./problem/', '')    
+    problem = wavpath.replace('./processing/'+filename+"/", '')    
     data,f= wav_read(wavpath + ".wav")
     yf, frq = calc_fft(data, f)
     

@@ -18,15 +18,6 @@ def calc_fft(data, fs): # FFTする
     return np.abs(yf), frq
 
 def envelope(y, rate, threshold):
-    """
-    Args:
-        - y: 信号データ
-        - rate: サンプリング周波数
-        - threshold: 雑音判断するしきい値
-    Returns:
-        - mask: 振幅がしきい値以上か否か
-        - y_mean: Sound Envelop
-    """
     y_mean = maximum_filter1d(np.abs(y), mode="constant", size=rate//20)
     mask = [mean > threshold for mean in y_mean]
     return mask, y_mean
@@ -45,25 +36,12 @@ def _amp_to_db(x):
     return librosa.core.amplitude_to_db(x, ref=1.0, amin=1e-20, top_db=80.0)
 def _istft(y, hop_length, win_length):
     return librosa.istft(y, hop_length, win_length)
-#sourceAudio = "sample.wav"
 
-#noise_source = "zproblemM5zzz.wav"
-#noise_source = "zatuon.wav"
-# 音声ファイルの読み込み
-# audio_clip, _ = librosa.load(path=noise_source, sr=sample_rate)
-
-# # # ノイズデータ取得
-# mask, noise_clip = envelope(audio_clip, sample_rate, threshold=0.03)
-# plt.axis([0, len(noise_clip), -max(noise_clip), max(noise_clip)])
-# plt.plot(audio_clip)
-# plt.plot(noise_clip)
 def noise_cancel(sourceAudio,noise):
-    sourceAudio1 =sourceAudio+ ".wav"
-    noise1 = "./snd/"+noise+".wav"
+    sourceAudio1 = sourceAudio+ ".wav"
+    noise1 = noise + ".wav"
     audio_clip,fs = wav_read(sourceAudio1)
-#noise_clip,fs = wav_read(noise_source)
     noise_clip,fs = wav_read(noise1)
-# noise_clip /=44
 
 
     noise_stft = _stft(noise_clip, n_fft, hop_length, win_length)
@@ -122,6 +100,4 @@ def noise_cancel(sourceAudio,noise):
     
     recovered_signal = _istft(sig_stft_amp, hop_length, win_length)
     recovered_signal = recovered_signal.astype(np.float32)
-    write("{problem}-{noise}.wav".format(problem=sourceAudio,noise=noise),rate = fs, data = recovered_signal)
-
-noise_cancel("zproblemM5zzzg","J01")
+    write("{}-noisecancel.wav".format(noise),rate = fs, data = recovered_signal)

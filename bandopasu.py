@@ -6,6 +6,7 @@ import librosa
 from scipy.io.wavfile import write
 
 
+
 def wav_read(path): # 音声ファイルを読み込む
     wave, fs = librosa.core.load(path, mono=True)
     return wave, fs
@@ -73,7 +74,7 @@ def band(wavpath,filename):
     samplerate = 48000
     q = 48000/22050
         
-    problem = wavpath.replace('./problem/', '')
+    problem = wavpath.replace('./processing/'+ filename +"/", '')
     data,f= wav_read(wavpath + ".wav")
     yf, frq = calc_fft(data, f)
 
@@ -106,5 +107,7 @@ def band(wavpath,filename):
         data_filt[j] = bandpass(data, samplerate, fp, fs, gpass, gstop)
         data_filt[j] = data_filt[j].astype(np.float32)
         data_filt[j] += data_filt[j-1]
-    
-    write("processing/{}/{}band.wav".format(filename,problem), rate=f, data=data_filt[len(end)-1])
+
+    writename ="processing/"+ filename +"/"+ problem+"band"
+    write(writename + ".wav", rate=f, data=data_filt[len(end)-1])
+    return writename
