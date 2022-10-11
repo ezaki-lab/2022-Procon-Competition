@@ -25,9 +25,10 @@ for row in sheet["B94":"E137"]:
 
 excel_data = excel_dataE + excel_dataJ
 
-n = input("部分一致：")
-match = []
-for i in range(88):
-  ms = [s for s in excel_data[i] if n in s]
-  if len(ms) != 0:
-    print(jp[i % 44],ms)
+while True:
+    n = input("部分一致：")
+    match = []
+    for i in range(88):
+        ms = [s for s in excel_data[i] if n in s]
+        if len(ms) != 0:
+            print(jp[i % 44],excel_data[i])
