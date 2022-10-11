@@ -41,12 +41,12 @@ def bandpass(x, samplerate, fp, fs, gpass, gstop):
         array.append(data[ps:ps + Fs:1])                                       # 切り出し位置psからフレームサイズ分抽出して配列に追加
     return array, N_ave                                                        # オーバーラップ抽出されたデータ配列とデータ個数を戻り値にする
 
-def nband(wavpath):
+def boinband(wavpath,filename):
     # ここからサンプル波形生成とフィルタ処理をする-------------------------------------------
     samplerate = 48000
     q = 48000/22050
         
-    problem = wavpath.replace('./problem/', '')
+    problem = wavpath.replace('./processing/'+ filename + "/", '')
     data,f= wav_read(wavpath + ".wav")
     # 波形生成のための時間軸の作成
     
@@ -72,14 +72,8 @@ def nband(wavpath):
         data_filt[j] = data_filt[j].astype(np.float32)
         data_filt[j] += data_filt[j-1]
 
-    write("processing/n{}band.wav".format(problem), rate=f, data=data_filt[len(end)-1])
-    
-def iband(wavpath):
-    
-    samplerate = 48000
-    q = 48000/22050
-    problem = wavpath.replace('./problem/', '')
-    data,f= wav_read(wavpath + ".wav")
+    write("processing/"+filename+"/n{}band.wav".format(problem), rate=f, data=data_filt[len(end)-1])
+
     start = [300]
     end = [1700]
 
@@ -94,14 +88,8 @@ def iband(wavpath):
     data_filt = bandpass(data, samplerate, fp, fs, gpass, gstop)
     data_filt = data_filt.astype(np.float32)
     data_filt *=5
-    write(f"processing/i{problem}.wav", rate=f, data=data_filt)
-    
-def eband(wavpath):
-    
-    samplerate = 48000
-    q=48000/22050
-    problem = wavpath.replace('./problem/', '')
-    data ,f = wav_read(wavpath + ".wav")
+    write(f"processing/"+filename+"/i{}band.wav".format(problem), rate=f, data=data_filt)
+
     fp = np.array([500, 1500])      #通過域端周波数[Hz]※ベクトル
     fs = np.array([250, 6000])      #阻止域端周波数[Hz]※ベクトル    gpass = 3                                               # 通過域端最大損失[dB]
     gstop = 40                                              # 阻止域端最小損失[dB]
@@ -109,11 +97,15 @@ def eband(wavpath):
     data_filt = bandstop(data, samplerate, fp, fs, gpass, gstop)
     
     data_filt = data_filt.astype(np.float32)
-    write(f"processing/e{problem}.wav",rate = f, data=data_filt)
+    write(f"processing/"+filename+"/e{}band.wav".format(problem),rate = f, data=data_filt)
 
-# def uband(wavpath):
-        
-#     samplerate = 48000
-#     q=48000/22050
-#     problem = wavpath.replace('./problem/', '')
-#     data ,f = wav_read(wavpath + ".wav")
+    fp = np.array([500, 2000])      #通過域端周波数[Hz]※ベクトル
+    fs = np.array([250, 4000])      #阻止域端周波数[Hz]※ベクトル
+    gpass = 1                                              # 通過域端最大損失[dB]
+    gstop = 41                                              # 阻止域端最小損失[dB]
+     
+    data_filt = bandstop(data, samplerate, fp, fs, gpass, gstop)
+    
+    data_filt = data_filt.astype(np.float32)
+    write(f"processing/a{problem}band.wav",rate = f, data=data_filt)
+
