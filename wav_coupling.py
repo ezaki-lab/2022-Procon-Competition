@@ -14,7 +14,6 @@ def WavSort(wavlist,name):
         
     wavdata = np.array(wavdata,dtype = "int16")
     name = "./processing/" + name + "/" + name
-    print(name)
     write(name + ".wav", rate=fs, data = wavdata)
     
     return name

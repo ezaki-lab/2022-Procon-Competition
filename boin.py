@@ -107,4 +107,9 @@ def boinband(wavpath,filename):
     data_filt = bandstop(data, samplerate, fp, fs, gpass, gstop)
     
     data_filt = data_filt.astype(np.float32)
+<<<<<<< HEAD
     write(f"processing/a{problem}band.wav",rate = f, data=data_filt)
+=======
+    write(f"processing/"+filename+"a{problem}band.wav",rate = f, data=data_filt)
+
+>>>>>>> 1fdf32a9a9451eb759b9500287979636ff34ba7a
