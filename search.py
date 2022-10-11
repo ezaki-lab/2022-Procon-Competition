@@ -30,4 +30,4 @@ match = []
 for i in range(88):
   ms = [s for s in excel_data[i] if n in s]
   if len(ms) != 0:
-    print(jp[i % 44],ms)
+    print(jp[i % 44],excel_data[i])
