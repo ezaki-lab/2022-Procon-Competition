@@ -5,6 +5,9 @@ import numpy as np
 from scipy.io.wavfile import read,write
 import scipy
 from scipy.ndimage import maximum_filter1d
+import urllib
+import requests
+import json
 
 url = "https://procon33-practice.kosen.work"
 filepath = "./problem"  
@@ -39,8 +42,8 @@ def _amp_to_db(x):
 def _istft(y, hop_length, win_length):
     return librosa.istft(y, hop_length, win_length)
 
-def noise_cancel(sourceAudio,noise):
-    sourceAudio1 = "./processing/"+sourceAudio+"/"+sourceAudio+ ".wav"
+def noise_cancel(sourceAudio,noise,noisename):
+    sourceAudio1 = "./processing/"+sourceAudio+"/"+noisename+ ".wav"
     noise1 = "./JKspeech/"+ noise + ".wav"
     audio_clip,fs = wav_read(sourceAudio1)
     noise_clip,fs = wav_read(noise1)
@@ -104,22 +107,27 @@ def noise_cancel(sourceAudio,noise):
     
     recovered_signal = _istft(sig_stft_amp, hop_length, win_length)
     recovered_signal = recovered_signal.astype(np.float32)
-    write("{}/{}/{}/{}-noisecancel.wav".format(path[0],path[1],path[2],noise),rate = fs, data = recovered_signal)
+    noisename = noise + noisename + "noisecan"
+    write("{}/{}/{}/{}.wav".format(path[0],path[1],path[2],noisename),rate = fs, data = recovered_signal)
+    return noisename
 
-original = "qual-1-1"
-noise = input("消す音源:")
-lang = noise[0]
-noise = noise[1]
-nmusic = ""
-lan = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわ"
-for i in range(43):
-    for j in noise:
-        if j == lan[i]: 
-            nmusic = str(i+1).zfill(2)
-            break
 
-#endpoint =urllib.parse.urljoin(url,"problem")
-#res = requests.get(endpoint, headers = {"procon-token": token})
-#res = json.loads(res.text)
+endpoint =urllib.parse.urljoin(url,"problem")
+res = requests.get(endpoint, headers = {"procon-token": token})
+res = json.loads(res.text)
+name = res["id"]
+noisename = name
 
-noise_cancel(original,lang + nmusic)
+while True:
+    noise = input("消す音源:")
+    lang = noise[0]
+    noise = noise[1]
+    nmusic = ""
+    lan = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわ"
+    for i in range(43):
+        for j in noise:
+            if j == lan[i]: 
+                nmusic = str(i+1).zfill(2)
+                break
+
+    noisename = noise_cancel(name,lang + nmusic,noisename)
