@@ -11,6 +11,7 @@ import bandopasu
 import filter_high_low
 import os
 import noisecancel
+import boin
 
 url = "https://procon33-practice.kosen.work"
 filepath = "./problem"  
@@ -96,6 +97,7 @@ if __name__ == "__main__":
     writename = bandopasu.band(wavpath,filename)
     filter_high_low.highlow(wavpath,filename)
     noisecancel.noise_cancel(wavpath,writename)
+    boin.boinband(wavpath,filename)
     #result = kinzi.kinzi(filename + ".wav")
     answer()
     
