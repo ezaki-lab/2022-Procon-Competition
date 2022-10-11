@@ -98,8 +98,7 @@ def boinband(wavpath,filename):
     
     data_filt = data_filt.astype(np.float32)
     write(f"processing/"+filename+"/e{}band.wav".format(problem),rate = f, data=data_filt)
-<<<<<<< HEAD
-
+    
     fp = np.array([500, 2000])      #通過域端周波数[Hz]※ベクトル
     fs = np.array([250, 4000])      #阻止域端周波数[Hz]※ベクトル
     gpass = 1                                              # 通過域端最大損失[dB]
@@ -109,6 +108,4 @@ def boinband(wavpath,filename):
     
     data_filt = data_filt.astype(np.float32)
     write(f"processing/a{problem}band.wav",rate = f, data=data_filt)
-=======
->>>>>>> 5f3fdf1c318d3f6fa8119e988d958324859f9ce4
 
