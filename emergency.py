@@ -11,7 +11,8 @@ import filter_high_low
 import bandopasu
 import noisecancel
 
-url = "https://procon33-practice.kosen.work"
+#url = "https://procon33-practice.kosen.work"
+url = "http://172.28.1.1:80"
 filepath = "./problem"  
 token = open("token.txt").read()
     
@@ -64,7 +65,7 @@ def answer(ansin:str) -> None:
     ans = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわ"
     endpoint = urllib.parse.urljoin(url,"problem")
     
-    for i in range(43):
+    for i in range(44):
         for j in ansin:
             if j == ans[i]: 
                 answers += str(i+1).zfill(2)
@@ -82,6 +83,16 @@ def answer(ansin:str) -> None:
     res = requests.post(endpoint, headers={"procon-token": token,
                                            "Content-Type": "application/json"}, data = j)
     print(res.text)
+
+def test() -> None:
+    endpoint = urllib.parse.urljoin(url,"test")
+    res = requests.get(endpoint,  headers={"procon-token": token})
+    
+    if res.status_code!=200:
+        print(res.text)
+        
+    else:
+        print(res.text)
     
 if __name__ == "__main__":
     while True:
@@ -107,6 +118,9 @@ if __name__ == "__main__":
             result = input("answer:")
             answer(result)
             
+        elif mode == "5":
+            test()
+
         elif mode == "4":
             break
     

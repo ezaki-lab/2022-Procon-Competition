@@ -13,7 +13,8 @@ import os
 import noisecancel
 import boin
 
-url = "https://procon33-practice.kosen.work"
+#url = "https://procon33-practice.kosen.work"
+url = "http://172.28.1.1:80"
 filepath = "./problem"  
 token = open("token.txt").read()
     
@@ -37,7 +38,7 @@ def problem() -> None:
     else:
         res = json.loads(res.text)
 
-        start = datetime.datetime.fromtimestamp(res["starts_at"])
+        start = datetime.datetime.fromtimestamp(res["start_at"])
         print("id:{}\n 分割数:{}\n 開始時間:{}:{}:{}\n 制限時間:{}\n データ数:{}".format(res["id"], res["chunks"], start.hour,start.minute,start.second, res["time_limit"], res["data"]))
         return res["id"]
 
@@ -63,11 +64,12 @@ def chunks(chunks) -> None:
     
 def answer() -> None:
     ansin = input("answer:")
+    ansin = "".join(set(ansin))
     answers = ""
     ans = "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわ"
     endpoint = urllib.parse.urljoin(url,"problem")
     
-    for i in range(43):
+    for i in range(44):
         for j in ansin:
             if j == ans[i]: 
                 answers += str(i+1).zfill(2)

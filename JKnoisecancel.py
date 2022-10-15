@@ -8,6 +8,7 @@ from scipy.ndimage import maximum_filter1d
 import urllib
 import requests
 import json
+import minus
 
 url = "https://procon33-practice.kosen.work"
 filepath = "./problem"  
@@ -130,4 +131,4 @@ while True:
                 nmusic = str(i+1).zfill(2)
                 break
 
-    noisename = noise_cancel(name,lang + nmusic,noisename)
+    name = minus.minus(nmusic,)
